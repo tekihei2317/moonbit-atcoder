@@ -1,11 +1,8 @@
 set quiet
 
 alias p := prepare
-alias u := use
 alias d := download
-alias b := build
 alias t := test
-alias c := copy
 
 [private]
 resolve-dir:
@@ -30,7 +27,7 @@ build:
   moon build --target js --release "$(just resolve-dir)"
 
 test:
-  dir="$(just resolve-dir)" && moon build --target js --release "$dir" && oj test -c "node _build/js/release/build/$dir/$dir.js"
+  dir="$(just resolve-dir)" && just build && cd "$dir" && oj test -c "node ../_build/js/release/build/$dir/$dir.js"
   just copy
 
 copy:
