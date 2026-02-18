@@ -4,10 +4,10 @@ MoonbitでAtCoder
 
 ## 目標
 
-- [ ] Moonbitで、AtCoder Beginners Selectionsの10問を解く
+- [x] Moonbitで、AtCoder Beginners Selectionsの10問を解く
   - [x] 1~4問
-  - [ ] 5~8問
-  - [ ] 9~10問
+  - [x] 5~8問
+  - [x] 9~10問
 - [x] [online-judge-tools/oj](https://github.com/online-judge-tools/oj)で、テストケースのダウンロード、実行、提出まで自動化する
   - 提出はCAPCHA認証がついたため、サードパーティーツールを使っての提出はできなくなっているようだ
   - [ジャッジキューの処理遅延と今後の対応につきまして - AtCoder](https://atcoder.jp/posts/1456?lang=ja)
@@ -304,3 +304,162 @@ moon build --release . && oj t -c "node ../_build/js/release/build/abc083b/abc08
 justfileを作って、試してみる。
 
 ---
+
+数字が何種類あるかどうかを調べる。Setに入れて、要素数を数えればOKです。
+
+標準ライブラリにsetがあるか確認。ありました。`@set.Set::from_array`して、`Set.length`で要素数を取れます。`Set.size`は非推奨。
+
+---
+
+2重ループをすればいいやつ。
+
+
+```mbt
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split(" ").map(x => try! @strconv.parse_int(x)).to_array()
+    is [n, y]
+
+  let mut ans : (Int, Int, Int)? = None
+  for i = 0; i <= n; i = i + 1 {
+    for j = 0; i + j <= n; j = j + 1 {
+      let k = n - (i + j)
+
+      let total = 10000 * i + 5000 * j + 1000 * k
+      if total == y {
+        ans = Some((i, j, k))
+      }
+    }
+  }
+  let (x, y, z) = ans.unwrap_or((-1, -1, -1))
+  println("\{x} \{y} \{z}")
+}
+```
+
+`unwrap_or`で、`None`だった場合のデフォルト値を設定してOptionの中身を取り出す。
+
+ループの部分を関数にすれば、`Option`を使わなくてもOK。
+
+---
+
+操作によってi文字目まで一致させられるか？を状態に持って、更新していく
+
+状態:
+
+dp[i] := trueのとき、i文字目まで一致させられる
+
+遷移:
+
+t = "dream" | "dreamer" | "erase" | "eraser"として、
+
+dp[i + t.length] |= true if s[i..(i+t.length)] = t
+
+配列を、要素数を指定して初期化する方法が必要。`moon doc Array`を見る。`Array::make(Int, T) -> Self[T]`がそれっぽい。
+
+```mbt
+fn main {
+  let s = read_stdin().trim()
+  let ts = ["dream", "dreamer", "erase", "eraser"]
+  let n = s.length()
+
+  let dp = Array::make(n + 1, false)
+  dp[0] = true
+
+  for i = 0; i < n; i = i + 1 {
+    if !dp[i] {
+      continue
+    }
+    for t in ts {
+      if i + t.length() > n {
+        continue
+      }
+      // let ok = try! (s[i:i + t.length()] == t)
+      let ok = try! s[i:].has_prefix(t)
+      if ok {
+        dp[i + t.length()] = true
+      }
+    }
+  }
+  println(if dp[n] { "YES" } else { "NO" })
+}
+```
+
+`let ok = try! s[i:].has_prefix(t)`にしたら、スライスのオーバーフローを気にしなくていいかな？
+
+---
+
+x軸方向とy軸方向の移動量をそれぞれ`dx`、`dy`として、到達できる条件は
+
+- 時間が十分にあること: t >= dx + dy
+- 時間が余った場合に対応できること: t % 2 == (dx + dy) % 2
+
+の2つ。全ての移動について、これらの条件が満たされていることを確認すればよい。
+
+入力を受け取るのが一番難しい...。
+
+`Point`構造体を作ったんだけど、これって構造体のコンストラクタってあるんだっけ。←なさそう。
+
+一時変数を使ったり、`panic`しているところが綺麗じゃない。ちょっと改良しよう。
+
+```mbt
+///|
+fn main {
+  let input = read_stdin().trim()
+  guard input.split("\n").to_array() is [_n, .. rest]
+  let points = rest.map(x => {
+    let nums = x.split(" ").map(x => try! @strconv.parse_int(x)).to_array()
+    match nums {
+      [t, x, y] => { t, x, y }
+      _ => panic()
+    }
+  })
+
+  let mut now = { t: 0, x: 0, y: 0 }
+  let mut ok = true
+  for next in points {
+    let dt = Int::abs(next.t - now.t)
+    let dx = Int::abs(next.x - now.x)
+    let dy = Int::abs(next.y - now.y)
+
+    if dt < dx + dy || dt % 2 != (dx + dy) % 2 {
+      ok = false
+    }
+    now = next
+  }
+  println(if ok { "Yes" } else { "No" })
+}
+```
+
+`try?`で`raise` -> `Result`に変換して、パース失敗の処理は`filter_map`で無視する感じの実装にした。他のコードもこういう実装をした方がいいかもしれない。
+
+```mbt
+///|
+fn main {
+  let input = read_stdin().trim()
+  let lines = match input.split("\n").to_array() {
+    [_n, .. rest] => rest.to_array()
+    _ => []
+  }
+  let points = lines.filter_map(line => {
+    match line.split(" ").to_array().map(x => try? @strconv.parse_int(x)) {
+      [Ok(t), Ok(x), Ok(y)] => Some({ t, x, y })
+      _ => None
+    }
+  })
+  let mut now = { t: 0, x: 0, y: 0 }
+  let mut ok = true
+  for next in points {
+    let dt = Int::abs(next.t - now.t)
+    let dx = Int::abs(next.x - now.x)
+    let dy = Int::abs(next.y - now.y)
+
+    if dt < dx + dy || dt % 2 != (dx + dy) % 2 {
+      ok = false
+    }
+    now = next
+  }
+  println(if ok { "Yes" } else { "No" })
+}
+
+```
