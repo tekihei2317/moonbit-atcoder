@@ -16,6 +16,38 @@ MoonbitでAtCoder
   - 標準ライブラリの扱いについて、そのまま使えるものとインポートする必要があるもの
   - ディレクトリ構成などについて
   - moon runとmoon build
+- コマンドランナーを使う（just）
+
+## 調べること
+
+- ビルドターゲットについて。wasm、wasm-gc、native、javascriptがあるが、何が違うか。
+- JavaScriptへのビルドで生成されるコードについて。extern jsについて。
+- 標準ライブラリの使い方について。デフォルトで使えるものとインポートしないと使えないものがあるのが何が違うか。
+- moon runとmoon buildの違い、moon buildの--releaseオプションは何が変わるか。
+
+### ビルドターゲットについて
+
+moon CLIの`--target`オプションには、`wasm`、`wasm-gc`、`js`、`native`、`llvm`が指定できる。
+
+```text
+      --target <TARGET>            Select output target [possible values: wasm, wasm-gc, js, native, llvm, all]
+```
+
+TODO: それぞれ何を生成するか調べる
+
+- `wasm`:
+- `wasm-gc`:
+- `js`:
+- `native`:
+- `llvm`:
+
+### JavaScriptへのビルドの生成コードについて
+
+[Interacting with JavaScript in MoonBit: A First Look | MoonBit](https://www.moonbitlang.com/pearls/moonbit-jsffi)を読む。
+
+### 標準ライブラリの使い方について
+
+### moon runとmoon build、moon build --releaseの違いについて
 
 ## メモ
 
