@@ -7,5 +7,5 @@ extern "js" fn read_stdin() -> String =
 
 ///|
 fn main {
-
+  let _ = read_stdin()
 }

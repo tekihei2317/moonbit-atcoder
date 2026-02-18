@@ -1,5 +1,12 @@
 set quiet
 
+alias p := prepare
+alias u := use
+alias d := download
+alias b := build
+alias t := test
+alias c := copy
+
 [private]
 resolve-dir:
   cat .atcoder-target
@@ -16,36 +23,18 @@ use dir:
 current:
   cat .atcoder-target || echo "(not set)"
 
-download url dir:
-  cd "{{dir}}" && oj download "{{url}}"
-
-download-current url:
+download url:
   cd "$(just resolve-dir)" && oj download "{{url}}"
 
-build dir:
-  moon build --target js --release "{{dir}}"
-
-build-current:
+build:
   moon build --target js --release "$(just resolve-dir)"
 
-test dir:
-  moon build --target js --release "{{dir}}"
-  cd "{{dir}}" && oj test -c "node ../_build/js/release/build/{{dir}}/{{dir}}.js"
+test:
+  dir="$(just resolve-dir)" && moon build --target js --release "$dir" && oj test -c "node _build/js/release/build/$dir/$dir.js"
+  just copy
 
-test-current:
-  dir="$(just resolve-dir)" && moon build --target js --release "$dir" && cd "$dir" && oj test -c "node ../_build/js/release/build/$dir/$dir.js"
-
-copy dir:
-  pbcopy < "_build/js/release/build/{{dir}}/{{dir}}.js"
-  echo "copied _build/js/release/build/{{dir}}/{{dir}}.js"
-
-copy-current:
+copy:
   dir="$(just resolve-dir)" && pbcopy < "_build/js/release/build/$dir/$dir.js" && echo "copied _build/js/release/build/$dir/$dir.js"
 
-all dir:
-  just test "{{dir}}"
-  just copy "{{dir}}"
-
-all-current:
-  just test-current
-  just copy-current
+all:
+  just test
