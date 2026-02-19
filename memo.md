@@ -1,5 +1,123 @@
 # メモ
 
+## 典型90問
+
+### [004 - Cross Sum（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_d)
+
+累積和。
+
+`sum_row[i] := i行目の数の合計`、`sum_col[j] := 行行目の数の合計`をあらかじめ計算しておく。
+
+`(i, j)`の答えは`sum_row[i] + sum_row[j] - a[i][j]`になる。
+
+2次元配列をどう扱えば良いのか。要素数がわかっていれば難しくないけど...。
+
+```mbt
+///|
+fn main {
+  let h = 3
+  let w = 5
+  let arr = Array::make(h, Array::make(w, 0))
+  for i = 0; i < h; i = i + 1 {
+    let mut line = ""
+    for j = 0; j < w; j = j + 1 {
+      if j > 0 {
+        line += " "
+      }
+      line += arr[i][j].to_string()
+    }
+    println(line)
+  }
+}
+```
+
+できた。かなり手続き的に書いているので、なんとかしたい。`try!`をよく使うので、`unsafe_perse_int`を書いた。テンプレートにも追加しておこう。
+
+あと、`terser`で圧縮するのも追加しておきたいな。
+
+```mbt
+///|
+fn unsafe_parse_int(x : StringView) -> Int {
+  try! @strconv.parse_int(x)
+}
+
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split("\n").to_array() is [hw, .. rest]
+  guard hw.split(" ").to_array().map(unsafe_parse_int) is [h, w]
+  let arr = rest.map(x => x.split(" ").to_array().map(unsafe_parse_int))
+
+  let sum_row = Array::make(h, 0)
+  let sum_col = Array::make(w, 0)
+
+  for i in 0..<h {
+    let mut sum = 0
+    for j in 0..<w {
+      sum += arr[i][j]
+    }
+    sum_row[i] = sum
+  }
+  for j in 0..<w {
+    let mut sum = 0
+    for i in 0..<h {
+      sum += arr[i][j]
+    }
+    sum_col[j] = sum
+  }
+
+  for i in 0..<h {
+    let mut line = ""
+    for j in 0..<w {
+      let ans = sum_row[i] + sum_col[j] - arr[i][j]
+      if j > 0 {
+        line += " "
+      }
+      line += ans.to_string()
+    }
+    println(line)
+  }
+}
+```
+
+できるだけ宣言的に。ぎこちないな...。制限時間結構危ないなと思ったけど、C++でも500msくらいかかってるからそんなもんか。
+
+あと、フォーマッタのインデントが崩れてるのでこちらは手動修正しよう。
+
+
+```mbt
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split("\n").to_array() is [hw, .. rest]
+  guard hw.split(" ").to_array().map(unsafe_parse_int) is [h, w]
+  let arr = rest.map(x => x.split(" ").to_array().map(unsafe_parse_int))
+
+  let sum_row = Array::makei(h, i => arr[i].fold(init=0, add))
+  let sum_col = Array::makei(w, j => {
+    arr.fold(init=0, (acc, row) => acc + row[j])
+  })
+  let ans = Array::makei(h, i => {
+    Array::makei(w, j => sum_row[i] + sum_col[j] - arr[i][j])
+      .map(x => x.to_string())
+      .join(" ")
+  }).join("\n")
+  println(ans)
+}
+```
+
+次解く時は、Terserで短くしてから提出するようにしよう。
+
+## 次に解く問題
+
+あんまり時間をかけて考察したいわけではない。考えるより、コードを書きたい。
+
+頻出のアルゴリズム、データ構造、テクニックを、Moonbitで綺麗に実装する方法を知りたい。そしてそれを、AIの参考にもなるように簡潔にまとめたい。
+
+AtCoderの問題は、好きかと言われると怪しい。考察重視で実装が簡潔になることが多いので。重実装をときたいとは思わないが、そこそこの実装量が欲しい。昔の4問時代のABCは、変な問題が結構あって面白かった印象。あとはJOI過去問も面白かった。
+
+本と並行して進めるとしたら、まだ読んだことがないものは、PAST過去問か鉄則本なので、どちらかが良いだろうか。とりあえず典型90問をやってみることにしようかな。簡単な問題から解いていこう。
+
 ## 目標
 
 - [x] Moonbitで、AtCoder Beginners Selectionsの10問を解く
@@ -9,12 +127,12 @@
 - [x] [online-judge-tools/oj](https://github.com/online-judge-tools/oj)で、テストケースのダウンロード、実行、提出まで自動化する
   - 提出はCAPCHA認証がついたため、サードパーティーツールを使っての提出はできなくなっているようだ
   - [ジャッジキューの処理遅延と今後の対応につきまして - AtCoder](https://atcoder.jp/posts/1456?lang=ja)
+- [x] コマンドランナーを使う（just）
 - [ ] MoonbitでAtCoder Beginners Selection解いてみた、記事を書く
   - JavaScriptにコンパイルすること
   - 標準ライブラリの扱いについて、そのまま使えるものとインポートする必要があるもの
   - ディレクトリ構成などについて
   - moon runとmoon build
-- [x] コマンドランナーを使う（just）
 
 ## 調べること
 
