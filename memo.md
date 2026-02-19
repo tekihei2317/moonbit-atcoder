@@ -2,7 +2,47 @@
 
 ## 典型90問
 
-### [004 - Cross Sum（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_d)
+### 2. [010 - Score Sum Queries（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_j)
+
+累積和。
+
+1組と2組で別々に答えを計算する必要があるから、2つ累積和の配列を持っておこう。
+
+入力を受け取るのが一番難しい、笑。なんかいい感じのAPIのライブラリ作れないかなぁ。
+
+入力サイズが大きいから、全部まとめて受け取ったら遅くならないか心配だ。
+
+とりあえずテストケースは通ったので提出。500msくらい。意外と大丈夫だった。
+
+実装は単純だが、入力を受け取る部分の方のコードの方が長い。
+
+```mbt
+///|
+fn main {
+  let (n, cp, q, lr) = read()
+
+  let sum1 = Array::make(n + 1, 0)
+  let sum2 = Array::make(n + 1, 0)
+  for index, x in cp {
+    if x.0 == 1 {
+      sum1[index + 1] = sum1[index] + x.1
+      sum2[index + 1] = sum2[index]
+    } else {
+      sum1[index + 1] = sum1[index]
+      sum2[index + 1] = sum2[index] + x.1
+    }
+  }
+
+  for i in 0..<q {
+    // [l, r)
+    let l = lr[i].0 - 1
+    let r = lr[i].1
+    println("\{sum1[r] - sum1[l]} \{sum2[r] - sum2[l]}")
+  }
+}
+```
+
+### 1. [004 - Cross Sum（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_d)
 
 累積和。
 
