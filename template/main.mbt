@@ -6,7 +6,7 @@ extern "js" fn read_stdin() -> String =
   #| }
 
 ///|
-fn _unsafe_parse_int(x : StringView) -> Int {
+fn _to_int(x : StringView) -> Int {
   try! @strconv.parse_int(x)
 }
 

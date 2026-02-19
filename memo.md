@@ -2,6 +2,20 @@
 
 ## 典型90問
 
+### 3. [022 - Cubic Cake（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_v)
+
+最大公約数っぽい問題。
+
+とりあえず2次元で考えてみる。4 x 6の長方形だったら、2 * 2の正方形に分けられる。縦は4/2=2個、横は6/2=3個だから、(2 - 1) + (3 - 1) = 3回切れば良い。
+
+3次元の場合、奥行きも同様に計算できる。なので答えは`g = gcd(A, B, C)`として`(A / g - 1) + (B / g - 1) + (C / g - 1)`になる。
+
+最大公約数の計算が問題だ。ユークリッドの互助法の実装方法は覚えてないから、教えてもらおう。
+
+理屈がわかれば実装も思い出せると思うので、理解しておきたい。
+
+[拡張ユークリッドの互除法を実装しよう #Python - Qiita](https://qiita.com/luuguas/items/1c0bc4fb7a5d8c7f3c07)
+
 ### 2. [010 - Score Sum Queries（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_j)
 
 累積和。
