@@ -8,6 +8,10 @@ alias t := test
 resolve-dir:
   cat .atcoder-target
 
+[private]
+mbt-comment file:
+  ( echo "/*"; cat "{{file}}"; echo "*/" )
+
 prepare dir:
   cp -R template "{{dir}}"
   printf "%s\n" "{{dir}}" > .atcoder-target
@@ -30,8 +34,16 @@ test:
   dir="$(just resolve-dir)" && just build && cd "$dir" && oj test -c "node ../_build/js/release/build/$dir/$dir.js"
   just copy
 
+[script]
 copy:
-  dir="$(just resolve-dir)" && pbcopy < "_build/js/release/build/$dir/$dir.js" && echo "copied _build/js/release/build/$dir/$dir.js"
+  dir="$(just resolve-dir)"
+  (
+    just mbt-comment "$dir/main.mbt"
+    terser "_build/js/release/build/$dir/$dir.js" \
+      --compress toplevel=true,passes=3 \
+      --mangle toplevel=true
+  ) | pbcopy
+  echo "copied minified JS with source block comment header for $dir"
 
-all:
-  just test
+copy-raw:
+  dir="$(just resolve-dir)" && pbcopy < "_build/js/release/build/$dir/$dir.js" && echo "copied raw _build/js/release/build/$dir/$dir.js"
