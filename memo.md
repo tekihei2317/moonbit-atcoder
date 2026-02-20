@@ -2,6 +2,63 @@
 
 ## 典型90問
 
+とりあえず難易度の低い問題から解いているけれど、アルゴリズム収集するんだったら他の方法の方がいいかも？
+
+### 5. [027 - Sign Up Requests （★2）](https://atcoder.jp/contests/typical90/tasks/typical90_aa)
+
+これはSetを使ってシミュレーションしていけばいいですね。guardをネストするってできるのだろうか。
+
+Setの使い方は標準ライブラリのドキュメントを確認しましょう。`add`と`contains`があるのでこれを使えばいいですね。
+
+[mooncakes.io](https://mooncakes.io/docs/moonbitlang/core/set)
+
+```mbt
+///|
+fn main {
+  let input = read_stdin().trim().split("\n").to_array()
+  guard input is [_n, .. names]
+
+  let st = @set.Set::new()
+  for i, name in names {
+    if !st.contains(name) {
+      st.add(name)
+      println(i + 1)
+    }
+  }
+}
+```
+
+### 4. [024 - Select +／- One（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_x)
+
+これはBeginners Selectionと似た問題ですね。
+
+- 操作回数が十分にあるか
+- パリティが一致しているか
+
+の2つを確認すればOK。パリティについて、直感的には理解できるけど、なんか上手く説明できないな...。
+
+「必要な操作回数と、操作できる回数の偶奇が一致していないといけない」なぜ？
+
+綺麗に書けますね。
+
+```mbt
+///|
+fn main {
+  let input = read_stdin().trim().split("\n").to_array()
+  guard input is [nk, a, b]
+  guard nk.split(" ").to_array().map(to_int) is [n, k]
+  let a = a.split(" ").to_array().map(to_int)
+  let b = b.split(" ").to_array().map(to_int)
+
+  let mut need = 0
+  for i in 0..<n {
+    need += Int::abs(a[i] - b[i])
+  }
+
+  let ans = if need <= k && need % 2 == k % 2 { "Yes" } else { "No" }
+  println(ans)
+}
+```
 ### 3. [022 - Cubic Cake（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_v)
 
 最大公約数っぽい問題。
