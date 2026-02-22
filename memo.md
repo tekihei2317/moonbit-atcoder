@@ -4,6 +4,45 @@
 
 とりあえず難易度の低い問題から解いているけれど、アルゴリズム収集するんだったら他の方法の方がいいかも？
 
+### 8. [061 - Deck（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bi)
+
+数を、配列の前または後ろに追加していく。ある段階で、前からx番目にある数が何かを求める問題。
+
+前から追加したものと、後ろから追加したものを持っておく。それぞれの要素数が分かれば、どの位置にあるのか分かるので、解ける。
+
+添え字でバグらせてしまったけど、素直な問題だ。
+
+```mbt
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split("\n").to_array() is [_q, .. tx]
+
+  let front = []
+  let back = []
+
+  for line in tx {
+    guard line.split(" ").to_array().map(to_int) is [t, x]
+
+    match t {
+      1 => front.push(x)
+      2 => back.push(x)
+      3 =>
+        if x <= front.length() {
+          // 前側にある場合
+          let ans = front[front.length() - x]
+          println(ans)
+        } else {
+          // 後ろ側にある場合
+          let ans = back[x - front.length() - 1]
+          println(ans)
+        }
+      _ => panic()
+    }
+  }
+}
+```
+
 ### 7. [055 - Select 5（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bc)
 
 なんか普通に難しそうな気がする。5個選んだ積をPで割ったあまりがQになる選び方はいくつあるか。
