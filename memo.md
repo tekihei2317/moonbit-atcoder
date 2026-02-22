@@ -4,6 +4,82 @@
 
 とりあえず難易度の低い問題から解いているけれど、アルゴリズム収集するんだったら他の方法の方がいいかも？
 
+### 9. [067 - Base 8 to 9（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bo)
+
+手を動かしてみる。
+
+N < 8^20だから、最大で8進数で20桁になる。2^60だから`int64`には収まる。
+
+9進法に直して、9を5に書き換えて、それを5進法で解釈する、らしい。
+
+8進法→10進法→9進法ならできるから、それでいいのかな。
+
+21(8) = 8 * 2 + 1 = 17
+17(10) = 9 + 8 = 18
+8 → 5に変換して、15
+
+なんかカスみたいなコードを書いてしまった、進数変換は頭がバグります。ランタイムエラーが出ちゃったので、Codexに書き直してもらった。
+
+文字列の操作とか、char -> Intの変換とかが怪しいなぁ。
+
+```mbt
+///|
+fn to_base_10(n : StringView) -> Int64 {
+  let mut sum : Int64 = 0
+  for ch in n {
+    let digit : Int64 = match ch {
+      '0' => 0
+      '1' => 1
+      '2' => 2
+      '3' => 3
+      '4' => 4
+      '5' => 5
+      '6' => 6
+      '7' => 7
+      _ => panic()
+    }
+    sum = sum * 8 + digit
+  }
+  sum
+}
+
+///|
+test "to_base_10" {
+  assert_eq(to_base_10("21"), 17)
+}
+
+///|
+fn to_base_9_and_change_8_to_5(n : Int64) -> String {
+  if n < 9 {
+    let replaced : Int64 = if n == 8 { 5 } else { n }
+    return replaced.to_string()
+  }
+
+  let q = n / 9
+  let raw = n % 9
+  let r : Int64 = if raw == 8 { 5 } else { raw }
+  to_base_9_and_change_8_to_5(q) + r.to_string()
+}
+
+///|
+test "to_base_9_and_change_8_to_5" {
+  assert_eq(to_base_9_and_change_8_to_5(17), "15")
+}
+
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split(" ").to_array() is [n, k]
+  let mut n = n.to_string()
+  let k = k |> to_int
+
+  for _ in 0..<k {
+    n = n |> to_base_10 |> to_base_9_and_change_8_to_5
+  }
+  println(n)
+}
+```
+
 ### 8. [061 - Deck（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bi)
 
 数を、配列の前または後ろに追加していく。ある段階で、前からx番目にある数が何かを求める問題。
