@@ -4,6 +4,47 @@
 
 とりあえず難易度の低い問題から解いているけれど、アルゴリズム収集するんだったら他の方法の方がいいかも？
 
+これで★2は全部一度解いたみたいなので、次からは★3の問題に移ります。楽しみですね。
+
+### 10. [078 - Easy Graph Problem（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bz)
+
+グラフの問題だ、いいですね。
+
+「自分より頂点番号が小さい隣接頂点がちょうど一つある」がいくつあるか。
+
+全部チェックすればOKですね。N回ループを回して、辺は2回見るのでステップ数はN+2*Mくらいになるので十分。
+
+もうちょっと綺麗に書ける気がするがとりあえずヨシ。2次元配列の初期化を`Array::make(n, [])`とすると参照が共有されるので`Array::makei(n, _i => [])`を使おう。
+
+```mbt
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split("\n").to_array() is [nm, .. abs]
+  guard nm.split(" ").to_array().map(to_int) is [n, m]
+
+  let graph : Array[Array[Int]] = Array::makei(n, _ => [])
+  for ab in abs {
+    guard ab.split(" ").to_array().map(to_int) is [a, b]
+    let a = a - 1
+    let b = b - 1
+    graph[a].push(b)
+    graph[b].push(a)
+  }
+
+  let mut ans = 0
+  for v, edges in graph {
+    let small_count = edges.filter(u => u < v).length()
+    if small_count == 1 {
+      ans += 1
+    }
+  }
+  println(ans)
+}
+
+```
+
+
 ### 9. [067 - Base 8 to 9（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bo)
 
 手を動かしてみる。
