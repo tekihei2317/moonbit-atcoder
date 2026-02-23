@@ -1,0 +1,8 @@
+import {
+  "moonbitlang/core/strconv",
+  "moonbitlang/core/set"
+}
+
+options(
+  "is-main": true,
+)
