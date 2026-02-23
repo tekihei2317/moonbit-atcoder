@@ -41,9 +41,7 @@ fn main {
   }
   println(ans)
 }
-
 ```
-
 
 ### 9. [067 - Base 8 to 9（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bo)
 
