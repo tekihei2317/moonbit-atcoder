@@ -6,6 +6,62 @@
 
 これで★2は全部一度解いたみたいなので、次からは★3の問題に移ります。楽しみですね。
 
+### 11. [002 - Encyclopedia of Parentheses（★3）](https://atcoder.jp/contests/typical90/tasks/typical90_b)
+
+長さNの正しい括弧列をすべて出力する。制約はN <= 20。
+
+これは2^20通りだから、全部作成して正しいかどうかを判定すればいい。この全探索ってどうやるんだっけ。
+
+正しい括弧列の判定は、閉じかっこの数が開きかっこの数を超えず、かつ最終的に一致すればOK。
+
+とりあえず生成はできたっぽい。ただ、辞書順になっていないみたいだから、直す。どうすればいいだろう？←bitで全探索したら辞書順にならなくないか？
+
+↑ビットを上位から読んでいけば辞書順になるよね、で解決した。N進法と辞書順の関連が分かっていないのがネックだった。
+
+```mbt
+///|
+fn check(n : Int, s : Int) -> Bool {
+  let mut balance = 0
+  for i in 0..<n {
+    // 0が開き括弧、1が閉じ括弧とする
+    if ((s >> (n - 1 - i)) & 1) == 0 {
+      balance += 1
+    } else {
+      balance -= 1
+    }
+    if balance < 0 {
+      return false
+    }
+  }
+  return balance == 0
+}
+
+///|
+fn bit_to_parenthesis(n : Int, s : Int) -> String {
+  let mut str = ""
+  for i in 0..<n {
+    if ((s >> (n - 1 - i)) & 1) == 0 {
+      str += "("
+    } else {
+      str += ")"
+    }
+  }
+  str
+}
+
+///|
+fn main {
+  let input = read_stdin()
+  let n = input.trim() |> to_int
+
+  for s in 0..<(1 << n) {
+    if check(n, s) {
+      println(bit_to_parenthesis(n, s))
+    }
+  }
+}
+```
+
 ### 10. [078 - Easy Graph Problem（★2）](https://atcoder.jp/contests/typical90/tasks/typical90_bz)
 
 グラフの問題だ、いいですね。
