@@ -34,15 +34,14 @@ test:
   dir="$(just resolve-dir)" && just build && cd "$dir" && oj test -c "node ../_build/js/release/build/$dir/$dir.js"
   just copy
 
-[script]
 copy:
-  dir="$(just resolve-dir)"
-  (
-    just mbt-comment "$dir/main.mbt"
+  dir="$(just resolve-dir)"; \
+  ( \
+    just mbt-comment "$dir/main.mbt"; \
     terser "_build/js/release/build/$dir/$dir.js" \
       --compress toplevel=true,passes=3 \
-      --mangle toplevel=true
-  ) | pbcopy
+      --mangle toplevel=true; \
+  ) | pbcopy; \
   echo "copied minified JS with source block comment header for $dir"
 
 copy-raw:
