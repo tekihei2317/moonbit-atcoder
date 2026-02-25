@@ -6,6 +6,49 @@
 
 これで★2は全部一度解いたみたいなので、次からは★3の問題に移ります。楽しみですね。
 
+### 12. [007 - CP Classes（★3）](https://atcoder.jp/contests/typical90/tasks/typical90_g)
+
+N個の数字とQ個のクエリが与えられる。
+
+一番差が小さいものを探す問題。これは大きい方か小さい方のどちらかなので、二分探索して確認すればいいですね。
+
+二分探索の関数が用意されているか、自分で実装するか。まずはArrayのドキュメントを探してみます。
+
+`Array::binary_search`がある。戻り値は`Result[Int, Int]`で、該当する要素があればそのインデックスを、そうでなければ挿入位置（つまり、x以上の最初のインデックス）`を返す。
+
+まぁなんか綺麗に書けたしあってるだろうという気持ちで提出。実行時間怪しい（1245ms < 3000ms）けどAC。
+
+```mbt
+///|
+fn[T : Compare] lower_bound(arr : Array[T], value : T) -> Int {
+  match arr.binary_search(value) {
+    Err(i) => i
+    Ok(i) => i
+  }
+}
+
+///|
+fn main {
+  let input = read_stdin()
+  guard input.trim().split("\n").to_array() is [_n, a, _q, .. b]
+  let a = a.split(" ").map(to_int).to_array()
+  let b = b.map(to_int)
+
+  a.sort()
+  for b in b {
+    let index = lower_bound(a, b)
+    let mut ans = 1001001001
+    if index < a.length() {
+      ans = Int::min(ans, Int::abs(a[index] - b))
+    }
+    if index - 1 >= 0 {
+      ans = Int::min(ans, Int::abs(a[index - 1] - b))
+    }
+    println(ans)
+  }
+}
+```
+
 ### 11. [002 - Encyclopedia of Parentheses（★3）](https://atcoder.jp/contests/typical90/tasks/typical90_b)
 
 長さNの正しい括弧列をすべて出力する。制約はN <= 20。
