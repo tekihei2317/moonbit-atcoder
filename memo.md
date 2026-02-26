@@ -6,6 +6,17 @@
 
 これで★2は全部一度解いたみたいなので、次からは★3の問題に移ります。楽しみですね。
 
+### 13. [014 - We Used to Sing a Song Together（★3）](https://atcoder.jp/contests/typical90/tasks/typical90_n)
+
+マンハッタン距離の総和を最小化するやつ。なんか2次元のやつを見たことある気がする。
+
+ソートして順番に当てはめるのが最適な感じのやつかな？証明: ACで行くか。多分、交差してると解消したほうがいいみたいなことが言えるんだと思う。
+
+```text
+0 1 2 6 8 9
+1 2 3 5 7 9
+```
+
 ### 12. [007 - CP Classes（★3）](https://atcoder.jp/contests/typical90/tasks/typical90_g)
 
 N個の数字とQ個のクエリが与えられる。
